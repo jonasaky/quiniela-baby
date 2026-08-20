@@ -177,7 +177,7 @@
                 <select id="p-gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm bg-white">
                   <option value="Niño">🩵 Niño</option>
                   <option value="Niña">🩷 Niña</option>
-                  <option value="Ya se sabe / N/A">✨ Ya se conoce el género</option>
+                  <!-- <option value="Ya se sabe / N/A">✨ Ya se conoce el género</option> -->
                 </select>
               </div>
 
@@ -264,7 +264,23 @@
 
       <div id="participants-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Tarjetas inyectadas dinámicamente por JS -->
-        <tbody id="tabla-apuestas"></tbody>
+        <!-- <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Parentesco</th>
+              <th>Género</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Peso</th>
+              <th>Talla</th>
+              <th>Ojos</th>
+              <th>Semblanza</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-apuestas">
+          </tbody>
+        </table> -->
       </div>
 
       <div id="empty-state" class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
@@ -363,7 +379,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       // renderParticipants();
       cargarApuestas();
-      updateCount();
     });
 
     function switchTab(tabId) {
@@ -391,14 +406,15 @@
 
       // Capturar los datos del formulario
       const datosFormulario = {
-        nombre: document.getElementById("p-name").value,
-        genero: document.getElementById("p-relation").value,
-        fecha: document.getElementById("p-date").value,
-        hora: document.getElementById("p-time").value,
-        peso: parseFloat(document.getElementById('p-weight').value),
-        talla: parseFloat(document.getElementById('p-height').value),
-        colorOjos: document.getElementById("p-eyes").value,
-        semblanza: document.getElementById('p-resemblance').value
+        name: document.getElementById("p-name").value,
+        relation: document.getElementById("p-relation").value,
+        gender: document.getElementById("p-gender").value,
+        date: document.getElementById("p-date").value,
+        time: document.getElementById("p-time").value,
+        weight: parseFloat(document.getElementById('p-weight').value),
+        height: parseFloat(document.getElementById('p-height').value),
+        eyes: document.getElementById("p-eyes").value,
+        resemblance: document.getElementById('p-resemblance').value
       };
 
       try {
@@ -433,42 +449,96 @@
     
     // Función para obtener los registros desde Google Sheets
     async function cargarApuestas() {
-      const contenedorTabla = document.getElementById("tabla-apuestas");
-      if (!contenedorTabla) return;
+      // const contenedorTabla = document.getElementById("tabla-apuestas");
+      // if (!contenedorTabla) return;
     
-      contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Cargando registros...</td></tr>`;
+      // contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Cargando registros...</td></tr>`;
     
       try {
         const response = await fetch(SCRIPT_URL);
         const participantes = await response.json();
     
+        const container = document.getElementById('participants-container');
+        const emptyState = document.getElementById('empty-state');
+
         if (!Array.isArray(participantes) || participantes.length === 0) {
-          contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Aún no hay apuestas registradas. ¡Sé el primero!</td></tr>`;
+          container.innerHTML = '';
+          emptyState.classList.remove('hidden');
+          // contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Aún no hay apuestas registradas. ¡Sé el primero!</td></tr>`;
           return;
         }
 
-        participants = participantes.length;
+        emptyState.classList.add('hidden');
+        participants = participantes;
+        updateCount();
+
         // Construir las filas de la tabla
-        let htmlContent = "";
-        participantes.forEach(p => {
-          htmlContent += `
-            <tr>
-              <td><strong>${p.nombre}</strong></td>
-              <td>${p.genero}</td>
-              <td>${p.fecha}</td>
-              <td>${p.hora}</td>
-              <td>${p.peso} kg</td>
-              <td>${p.talla} cm</td>
-              <td>${p.colorOjos}</td>
-            </tr>
-          `;
-        });
+        // let htmlContent = "";
+        // participantes.forEach(p => {
+        //   htmlContent += `
+        //     <tr>
+        //       <td><strong>${p.nombre}</strong></td>
+        //       <td>${p.parentesco}</td>
+        //       <td>${p.genero}</td>
+        //       <td>${new Date(p.fecha).toDateString()}</td>
+        //       <td>${p.hora}</td>
+        //       <td>${p.peso} kg</td>
+        //       <td>${p.talla} cm</td>
+        //       <td>${p.colorOjos}</td>
+        //       <td>${p.semblanza}</td>
+        //     </tr>
+        //   `;
+        // });
+
+        container.innerHTML = participants.map(p => `
+          <div class="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm relative card-print">
+            <button onclick="deleteParticipant(${p.id})" class="no-print absolute top-3 right-3 text-slate-300 hover:text-rose-500 text-xs">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            
+            <div class="mb-3">
+              <h3 class="font-bold text-slate-800 text-base">${p.name}</h3>
+              <span class="text-xs text-rose-500 font-medium bg-rose-50 px-2 py-0.5 rounded-full">${p.relation}</span>
+            </div>
+
+            <div class="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Género:</span>
+                <span class="font-semibold">${p.gender}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Fecha:</span>
+                <span class="font-semibold">${p.date}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Hora:</span>
+                <span class="font-semibold">${p.time} hs</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Peso:</span>
+                <span class="font-semibold">${p.weight} g (${(p.weight/1000).toFixed(2)} kg)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Estatura:</span>
+                <span class="font-semibold">${p.height} cm</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Ojos:</span>
+                <span class="font-semibold">${p.eyes}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Parecido:</span>
+                <span class="font-semibold">${p.resemblance}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
     
-        contenedorTabla.innerHTML = htmlContent;
+        // contenedorTabla.innerHTML = htmlContent;
     
       } catch (error) {
         console.error("Error al cargar participantes:", error);
-        contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error al obtener la lista de participantes.</td></tr>`;
+        // contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error al obtener la lista de participantes.</td></tr>`;
       }
     }
 
