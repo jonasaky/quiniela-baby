@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiniela Familiar de Baby Shower</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: #fdfbf7;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Fredoka', cursive;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white; }
+      .card-print { break-inside: avoid; border: 1px solid #ccc !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen pb-12">
+
+  <!-- Header Header -->
+  <header class="bg-gradient-to-r from-amber-100 via-rose-100 to-sky-100 border-b border-amber-200/60 py-8 px-4 text-center shadow-sm relative no-print">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 rounded-full text-xs font-semibold text-amber-700 mb-3 shadow-sm border border-amber-200">
+        <i class="fa-solid fa-baby text-rose-400"></i> Juego Familiar de Predicciones
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold text-slate-800 mb-2">👶 La Quiniela del Bebé 🍼</h1>
+      <p class="text-slate-600 text-sm md:text-base max-w-xl mx-auto">
+        ¡Hagan sus apuestas! Adivinen los detalles del nacimiento. Cuando nazca el bebé, ingresaremos los datos reales para conocer al gran ganador.
+      </p>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 mt-6">
+
+    <!-- Navegación por Pestañas -->
+    <div class="flex flex-wrap justify-center gap-2 mb-8 no-print border-b border-slate-200 pb-4">
+      <button onclick="switchTab('tab-registro')" id="btn-tab-registro" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition-all flex items-center gap-2 bg-rose-500 text-white shadow-md">
+        <i class="fa-solid fa-user-plus"></i> Registrar Participante
+      </button>
+      <button onclick="switchTab('tab-participantes')" id="btn-tab-participantes" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
+        <i class="fa-solid fa-users"></i> Lista de Porras (<span id="count-participants">0</span>)
+      </button>
+      <button onclick="switchTab('tab-evaluador')" id="btn-tab-evaluador" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
+        <i class="fa-solid fa-trophy text-amber-500"></i> ¡Ya Nació! (Resultados)
+      </button>
+      <button onclick="switchTab('tab-puntos')" id="btn-tab-puntos" class="tab-btn px-5 py-2.5 rounded-xl font-medium text-sm transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border border-slate-200">
+        <i class="fa-solid fa-star text-amber-400"></i> Tabla de Puntos
+      </button>
+    </div>
+
+    <!-- Pestaña 1: Reglas y Sistema de Puntos -->
+    <section id="tab-puntos" class="tab-content hidden">
+      <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200/80 mb-6">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-rose-400"></i> Sistema de Puntaje Oficial
+        </h2>
+        <p class="text-slate-600 mb-6 text-sm">
+          Cada predicción correcta suma puntos. En categorías continuas (como fecha, hora o peso), se otorgan puntos parciales según qué tan cerca estuvo la estimación.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div class="p-4 rounded-xl bg-amber-50/50 border border-amber-200/60">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-regular fa-calendar-days text-amber-500"></i> Fecha de Nacimiento</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-amber-200 text-amber-800 rounded-full">Hasta 30 Pts</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1">
+              <li>• <strong>30 pts:</strong> Día exacto.</li>
+              <li>• <strong>15 pts:</strong> ±1 día de diferencia.</li>
+              <li>• <strong>5 pts:</strong> ±3 días de diferencia.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-sky-50/50 border border-sky-200/60">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-sky-900 flex items-center gap-2"><i class="fa-regular fa-clock text-sky-500"></i> Hora de Nacimiento</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-sky-200 text-sky-800 rounded-full">Hasta 25 Pts</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1">
+              <li>• <strong>25 pts:</strong> Dentro de ±30 minutos.</li>
+              <li>• <strong>15 pts:</strong> Dentro de ±2 horas.</li>
+              <li>• <strong>10 pts:</strong> Acertar el turno (Madrugada, Mañana, Tarde, Noche).</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200/60">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-emerald-900 flex items-center gap-2"><i class="fa-solid fa-weight-scale text-emerald-500"></i> Peso al Nacer</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-emerald-200 text-emerald-800 rounded-full">Hasta 20 Pts</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1">
+              <li>• <strong>20 pts:</strong> Diferencia menor o igual a 100g.</li>
+              <li>• <strong>10 pts:</strong> Diferencia entre 101g y 300g.</li>
+              <li>• <strong>5 pts:</strong> Diferencia entre 301g y 500g.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-purple-50/50 border border-purple-200/60">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-purple-900 flex items-center gap-2"><i class="fa-solid fa-ruler-vertical text-purple-500"></i> Estatura / Talla</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-purple-200 text-purple-800 rounded-full">Hasta 20 Pts</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1">
+              <li>• <strong>20 pts:</strong> Medida exacta (±0.5 cm).</li>
+              <li>• <strong>10 pts:</strong> Diferencia de ±2 cm.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50/50 border border-rose-200/60">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-rose-900 flex items-center gap-2"><i class="fa-solid fa-eye text-rose-500"></i> Color de Ojos al Nacer</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-rose-200 text-rose-800 rounded-full">10 Pts</span>
+            </div>
+            <p class="text-xs text-slate-600">• <strong>10 pts:</strong> Acertar la tonalidad principal (Azul/Gris, Café/Oscuro, Verde/Miel).</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-indigo-50/50 border border-indigo-200/60">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-indigo-900 flex items-center gap-2"><i class="fa-solid fa-people-mommies text-indigo-500"></i> ¿A quién se parecerá?</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-indigo-200 text-indigo-800 rounded-full">15 Pts</span>
+            </div>
+            <p class="text-xs text-slate-600">• <strong>15 pts:</strong> Decisión otorgada por votación de los nuevos papás al nacer.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-teal-50/50 border border-teal-200/60 md:col-span-2">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-teal-900 flex items-center gap-2"><i class="fa-solid fa-venus-mars text-teal-500"></i> Género (Si aún es sorpresa)</span>
+              <span class="text-xs font-bold px-2.5 py-1 bg-teal-200 text-teal-800 rounded-full">15 Pts</span>
+            </div>
+            <p class="text-xs text-slate-600">• <strong>15 pts:</strong> Acertar si es Niña o Niño (si la familia aún no lo sabe al momento del juego).</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Pestaña 2: Formulario de Registro -->
+    <section id="tab-registro" class="tab-content">
+      <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200/80">
+        <div class="max-w-2xl mx-auto">
+          <h2 class="text-2xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-rose-400"></i> Registro de Pronóstico Familiar
+          </h2>
+          <p class="text-slate-500 text-sm mb-6">Ingresa el nombre del participante y sus predicciones para el bebé.</p>
+
+          <form id="form-participant" onsubmit="saveParticipant(event)" class="space-y-6">
+            
+            <!-- Nombre y Parentesco -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Nombre completo *</label>
+                <input type="text" id="p-name" required placeholder="Ej: Tía Laura" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Parentesco / Relación</label>
+                <input type="text" id="p-relation" placeholder="Ej: Abuela, Primo, Amigo..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm">
+              </div>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <!-- Predicciones -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+              <!-- Género (Opcional) -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">1. Predicción de Género</label>
+                <select id="p-gender" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm bg-white">
+                  <option value="Niño">🩵 Niño</option>
+                  <option value="Niña">🩷 Niña</option>
+                  <option value="Ya se sabe / N/A">✨ Ya se conoce el género</option>
+                </select>
+              </div>
+
+              <!-- Fecha -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">2. Fecha estimada de nacimiento *</label>
+                <input type="date" id="p-date" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm">
+              </div>
+
+              <!-- Hora -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">3. Hora estimada de nacimiento *</label>
+                <input type="time" id="p-time" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm">
+              </div>
+
+              <!-- Peso -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">4. Peso estimado (Gramos o Kilos) *</label>
+                <div class="relative">
+                  <input type="number" step="10" id="p-weight" required placeholder="Ej: 3200 (en gramos)" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm pr-12">
+                  <span class="absolute right-3 top-2.5 text-xs font-semibold text-slate-400">gramos</span>
+                </div>
+                <span class="text-[11px] text-slate-400">Ejemplo: 3.2 kg = 3200 gramos</span>
+              </div>
+
+              <!-- Estatura -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">5. Talla / Estatura (cm) *</label>
+                <div class="relative">
+                  <input type="number" step="0.5" id="p-height" required placeholder="Ej: 50" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm pr-10">
+                  <span class="absolute right-3 top-2.5 text-xs font-semibold text-slate-400">cm</span>
+                </div>
+              </div>
+
+              <!-- Color de Ojos -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">6. Color de ojos al nacer</label>
+                <select id="p-eyes" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm bg-white">
+                  <option value="Oscuros / Cafés">Cafés / Oscuros</option>
+                  <option value="Azul / Grisáceo">Azul / Grisáceo</option>
+                  <option value="Verde / Miel">Verde / Miel</option>
+                </select>
+              </div>
+
+              <!-- Parecido -->
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-700 mb-1">7. ¿A quién se parecerá más?</label>
+                <select id="p-resemblance" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 text-sm bg-white">
+                  <option value="A la Mamá">A la Mamá</option>
+                  <option value="Al Papá">Al Papá</option>
+                  <option value="A la Abuela">A una Abuela</option>
+                  <option value="Al Abuelo">A un Abuelo</option>
+                  <option value="Combinación exacta 50/50">Mezcla exacta 50% Mamá y 50% Papá</option>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- Botón Guardar -->
+            <div class="pt-4 flex gap-3">
+              <button type="submit" class="flex-1 py-3 px-6 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check"></i> Registrar mi Pronóstico
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pestaña 3: Lista de Participantes -->
+    <section id="tab-participantes" class="tab-content hidden">
+      <div class="flex justify-between items-center mb-6 no-print">
+        <h2 class="text-2xl font-bold text-slate-800">📋 Apuestas Registradas</h2>
+        <div class="flex gap-2">
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-print"></i> Imprimir Fichas
+          </button>
+          <button onclick="clearAllData()" class="px-3 py-2 bg-rose-100 text-rose-700 text-xs font-bold rounded-lg hover:bg-rose-200 transition">
+            Reiniciar Todo
+          </button>
+        </div>
+      </div>
+
+      <div id="participants-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Tarjetas inyectadas dinámicamente por JS -->
+      </div>
+
+      <div id="empty-state" class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
+        <i class="fa-solid fa-clipboard-question text-4xl text-slate-300 mb-3"></i>
+        <p class="text-slate-500 font-medium text-sm">Aún no hay predicciones registradas.</p>
+        <button onclick="switchTab('tab-registro')" class="mt-3 px-4 py-2 text-xs font-bold text-rose-500 bg-rose-50 rounded-lg hover:bg-rose-100 transition">
+          Agregar la primera
+        </button>
+      </div>
+    </section>
+
+    <!-- Pestaña 4: Resultados / Nació el Bebé -->
+    <section id="tab-evaluador" class="tab-content hidden">
+      <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200/80 mb-8">
+        <h2 class="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-baby-carriage text-amber-500"></i> Captura los Datos Reales del Bebé
+        </h2>
+        <p class="text-slate-500 text-sm mb-6">Completa este formulario una vez que el bebé haya nacido para calcular automáticamente al ganador.</p>
+
+        <form id="form-official-results" onsubmit="calculateWinners(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Género Real</label>
+            <select id="real-gender" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+              <option value="Niño">Niño</option>
+              <option value="Niña">Niña</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha de Nacimiento Real</label>
+            <input type="date" id="real-date" required class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Hora Exacta de Nacimiento</label>
+            <input type="time" id="real-time" required class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Peso Real (gramos)</label>
+            <input type="number" id="real-weight" required placeholder="Ej: 3350" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Talla / Estatura Real (cm)</label>
+            <input type="number" step="0.1" id="real-height" required placeholder="Ej: 51" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Color de Ojos Observado</label>
+            <select id="real-eyes" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+              <option value="Oscuros / Cafés">Cafés / Oscuros</option>
+              <option value="Azul / Grisáceo">Azul / Grisáceo</option>
+              <option value="Verde / Miel">Verde / Miel</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Voto de los Papás: ¿A quién se parece más?</label>
+            <select id="real-resemblance" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+              <option value="A la Mamá">A la Mamá</option>
+              <option value="Al Papá">Al Papá</option>
+              <option value="A la Abuela">A una Abuela</option>
+              <option value="Al Abuelo">A un Abuelo</option>
+              <option value="Combinación exacta 50/50">Mezcla exacta 50% Mamá y 50% Papá</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-1 flex items-end">
+            <button type="submit" class="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-lg shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-calculator"></i> Calcular Ganadores
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Podio / Leaderboard -->
+      <div id="results-leaderboard" class="hidden space-y-4">
+        <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-500"></i> Tabla de Posiciones y Ganadores
+        </h3>
+        <div id="leaderboard-cards" class="space-y-3">
+          <!-- Tarjetas del ranking inyectadas por JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script JS -->
+  <script>
+    let participants = JSON.parse(localStorage.getItem('baby_quiniela_participants')) || [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderParticipants();
+      updateCount();
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-rose-500', 'text-white', 'shadow-md');
+        btn.classList.add('bg-white', 'text-slate-600');
+      });
+
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      activeBtn.classList.remove('bg-white', 'text-slate-600');
+      activeBtn.classList.add('bg-rose-500', 'text-white', 'shadow-md');
+    }
+
+    // URL que copiaste en el Paso 3
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlw9R_PKr9F5r9l4gD1pUFLhitlxPMKqQWUOeQ00-cp6DF5L7sVY7Vl2nvRnNYj3LmVw/exec";
+
+    async function saveParticipant(event) {
+      event.preventDefault();
+
+      const btnEnviar = document.getElementById("btn-enviar");
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = "Guardando...";
+
+      // Capturar los datos del formulario
+      const datosFormulario = {
+        nombre: document.getElementById("p-name").value,
+        genero: document.getElementById("p-relation").value,
+        fecha: document.getElementById("p-date").value,
+        hora: document.getElementById("p-time").value,
+        peso: parseFloat(document.getElementById('p-weight').value),
+        talla: parseFloat(document.getElementById('p-height').value),
+        colorOjos: document.getElementById("colorOjos").value,
+        semblanza: document.getElementById('p-resemblance').value
+      };
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors", // Requerido para Google Apps Script
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(datosFormulario)
+        });
+
+        document.getElementById('form-participant').reset();
+        renderParticipants();
+        updateCount();
+        alert('¡Predicción registrada con éxito!');
+        switchTab('tab-participantes');
+
+      } catch (error) {
+        console.error("Error al enviar los datos:", error);
+        alert("Ocurrió un error al guardar tu respuesta. Inténtalo nuevamente.");
+      } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = "Enviar Pronóstico";
+      }
+    }
+
+    // function saveParticipant(e) {
+    //   e.preventDefault();
+      
+    //   const newParticipant = {
+    //     id: Date.now(),
+    //     name: document.getElementById('p-name').value,
+    //     relation: document.getElementById('p-relation').value || 'Familiar / Amigo',
+    //     gender: document.getElementById('p-gender').value,
+    //     date: document.getElementById('p-date').value,
+    //     time: document.getElementById('p-time').value,
+    //     weight: parseFloat(document.getElementById('p-weight').value),
+    //     height: parseFloat(document.getElementById('p-height').value),
+    //     eyes: document.getElementById('p-eyes').value,
+    //     resemblance: document.getElementById('p-resemblance').value
+    //   };
+
+    //   participants.push(newParticipant);
+    //   localStorage.setItem('baby_quiniela_participants', JSON.stringify(participants));
+      
+    //   document.getElementById('form-participant').reset();
+    //   renderParticipants();
+    //   updateCount();
+    //   alert('¡Predicción registrada con éxito!');
+    //   switchTab('tab-participantes');
+    // }
+
+    function updateCount() {
+      document.getElementById('count-participants').innerText = participants.length;
+    }
+
+    function deleteParticipant(id) {
+      if (confirm('¿Eliminar esta participación?')) {
+        participants = participants.filter(p => p.id !== id);
+        localStorage.setItem('baby_quiniela_participants', JSON.stringify(participants));
+        renderParticipants();
+        updateCount();
+      }
+    }
+
+    function clearAllData() {
+      if (confirm('¿Estás seguro de borrar todas las apuestas?')) {
+        participants = [];
+        localStorage.removeItem('baby_quiniela_participants');
+        renderParticipants();
+        updateCount();
+      }
+    }
+
+    function renderParticipants() {
+      const container = document.getElementById('participants-container');
+      const emptyState = document.getElementById('empty-state');
+
+      if (participants.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = participants.map(p => `
+        <div class="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm relative card-print">
+          <button onclick="deleteParticipant(${p.id})" class="no-print absolute top-3 right-3 text-slate-300 hover:text-rose-500 text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          
+          <div class="mb-3">
+            <h3 class="font-bold text-slate-800 text-base">${p.name}</h3>
+            <span class="text-xs text-rose-500 font-medium bg-rose-50 px-2 py-0.5 rounded-full">${p.relation}</span>
+          </div>
+
+          <div class="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Género:</span>
+              <span class="font-semibold">${p.gender}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Fecha:</span>
+              <span class="font-semibold">${p.date}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Hora:</span>
+              <span class="font-semibold">${p.time} hs</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Peso:</span>
+              <span class="font-semibold">${p.weight} g (${(p.weight/1000).toFixed(2)} kg)</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Estatura:</span>
+              <span class="font-semibold">${p.height} cm</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Ojos:</span>
+              <span class="font-semibold">${p.eyes}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Parecido:</span>
+              <span class="font-semibold">${p.resemblance}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function calculateWinners(e) {
+      e.preventDefault();
+
+      if (participants.length === 0) {
+        alert('Debes registrar al menos a un participante antes de calcular resultados.');
+        return;
+      }
+
+      const real = {
+        gender: document.getElementById('real-gender').value,
+        date: new Date(document.getElementById('real-date').value + 'T00:00:00'),
+        timeStr: document.getElementById('real-time').value,
+        weight: parseFloat(document.getElementById('real-weight').value),
+        height: parseFloat(document.getElementById('real-height').value),
+        eyes: document.getElementById('real-eyes').value,
+        resemblance: document.getElementById('real-resemblance').value
+      };
+
+      const [realH, realM] = real.timeStr.split(':').map(Number);
+      const realTotalMinutes = realH * 60 + realM;
+
+      const scoredParticipants = participants.map(p => {
+        let score = 0;
+        let breakdown = [];
+
+        // 1. Género
+        if (p.gender === real.gender) {
+          score += 15;
+          breakdown.push('Género exacto (+15 pts)');
+        }
+
+        // 2. Fecha
+        const pDate = new Date(p.date + 'T00:00:00');
+        const diffDays = Math.abs((pDate - real.date) / (1000 * 60 * 60 * 24));
+        if (diffDays === 0) {
+          score += 30;
+          breakdown.push('Fecha exacta (+30 pts)');
+        } else if (diffDays <= 1) {
+          score += 15;
+          breakdown.push('Fecha ±1 día (+15 pts)');
+        } else if (diffDays <= 3) {
+          score += 5;
+          breakdown.push('Fecha ±3 días (+5 pts)');
+        }
+
+        // 3. Hora
+        const [pH, pM] = p.time.split(':').map(Number);
+        const pTotalMinutes = pH * 60 + pM;
+        const diffMinutes = Math.abs(pTotalMinutes - realTotalMinutes);
+
+        if (diffMinutes <= 30) {
+          score += 25;
+          breakdown.push('Hora exacta ±30m (+25 pts)');
+        } else if (diffMinutes <= 120) {
+          score += 15;
+          breakdown.push('Hora cercana ±2h (+15 pts)');
+        } else {
+          // Turnos
+          const getTurn = (h) => (h >= 0 && h < 6) ? 'Madrugada' : (h >= 6 && h < 12) ? 'Mañana' : (h >= 12 && h < 18) ? 'Tarde' : 'Noche';
+          if (getTurn(pH) === getTurn(realH)) {
+            score += 10;
+            breakdown.push('Turno del día acertado (+10 pts)');
+          }
+        }
+
+        // 4. Peso
+        const diffWeight = Math.abs(p.weight - real.weight);
+        if (diffWeight <= 100) {
+          score += 20;
+          breakdown.push('Peso exacto ±100g (+20 pts)');
+        } else if (diffWeight <= 300) {
+          score += 10;
+          breakdown.push('Peso cercano ±300g (+10 pts)');
+        } else if (diffWeight <= 500) {
+          score += 5;
+          breakdown.push('Peso aproximado ±500g (+5 pts)');
+        }
+
+        // 5. Estatura
+        const diffHeight = Math.abs(p.height - real.height);
+        if (diffHeight <= 0.5) {
+          score += 20;
+          breakdown.push('Talla exacta (+20 pts)');
+        } else if (diffHeight <= 2) {
+          score += 10;
+          breakdown.push('Talla cercana ±2cm (+10 pts)');
+        }
+
+        // 6. Ojos
+        if (p.eyes === real.eyes) {
+          score += 10;
+          breakdown.push('Color de ojos (+10 pts)');
+        }
+
+        // 7. Parecido
+        if (p.resemblance === real.resemblance) {
+          score += 15;
+          breakdown.push('Parecido (+15 pts)');
+        }
+
+        return { ...p, score, breakdown };
+      });
+
+      // Ordenar por mayor puntaje
+      scoredParticipants.sort((a, b) => b.score - a.score);
+
+      // Renderizar Leaderboard
+      const leaderboardContainer = document.getElementById('leaderboard-cards');
+      leaderboardContainer.innerHTML = scoredParticipants.map((p, idx) => {
+        let badgeColor = 'bg-slate-100 text-slate-700';
+        let trophy = `#${idx + 1}`;
+
+        if (idx === 0) {
+          badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
+          trophy = '🥇 1er Lugar';
+        } else if (idx === 1) {
+          badgeColor = 'bg-slate-200 text-slate-800 border-slate-300';
+          trophy = '🥈 2do Lugar';
+        } else if (idx === 2) {
+          badgeColor = 'bg-amber-700/10 text-amber-900 border-amber-200';
+          trophy = '🥉 3er Lugar';
+        }
+
+        return `
+          <div class="p-4 rounded-xl border bg-white shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeColor}">${trophy}</span>
+                <h4 class="font-bold text-slate-800">${p.name}</h4>
+                <span class="text-xs text-slate-400">(${p.relation})</span>
+              </div>
+              <div class="flex flex-wrap gap-1 text-[11px] text-slate-500 mt-1">
+                ${p.breakdown.map(b => `<span class="bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded">${b}</span>`).join('')}
+              </div>
+            </div>
+            <div class="text-right self-end md:self-auto">
+              <span class="text-2xl font-bold text-rose-500">${p.score}</span>
+              <span class="text-xs text-slate-400"> pts</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('results-leaderboard').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
