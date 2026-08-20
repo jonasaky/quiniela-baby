@@ -264,6 +264,7 @@
 
       <div id="participants-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Tarjetas inyectadas dinámicamente por JS -->
+        <tbody id="tabla-apuestas"></tbody>
       </div>
 
       <div id="empty-state" class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
@@ -360,7 +361,7 @@
     let participants = JSON.parse(localStorage.getItem('baby_quiniela_participants')) || [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderParticipants();
+      // renderParticipants();
       updateCount();
     });
 
@@ -410,7 +411,12 @@
         });
 
         document.getElementById('form-participant').reset();
-        renderParticipants();
+        // renderParticipants();
+        // Recargar la tabla con la nueva apuesta
+        setTimeout(() => {
+          cargarApuestas();
+        }, 1500); // Pequeña pausa para asegurar sincronización con Google Sheets
+        
         updateCount();
         alert('¡Predicción registrada con éxito!');
         switchTab('tab-participantes');
@@ -424,31 +430,50 @@
       }
     }
 
-    // function saveParticipant(e) {
-    //   e.preventDefault();
-      
-    //   const newParticipant = {
-    //     id: Date.now(),
-    //     name: document.getElementById('p-name').value,
-    //     relation: document.getElementById('p-relation').value || 'Familiar / Amigo',
-    //     gender: document.getElementById('p-gender').value,
-    //     date: document.getElementById('p-date').value,
-    //     time: document.getElementById('p-time').value,
-    //     weight: parseFloat(document.getElementById('p-weight').value),
-    //     height: parseFloat(document.getElementById('p-height').value),
-    //     eyes: document.getElementById('p-eyes').value,
-    //     resemblance: document.getElementById('p-resemblance').value
-    //   };
-
-    //   participants.push(newParticipant);
-    //   localStorage.setItem('baby_quiniela_participants', JSON.stringify(participants));
-      
-    //   document.getElementById('form-participant').reset();
-    //   renderParticipants();
-    //   updateCount();
-    //   alert('¡Predicción registrada con éxito!');
-    //   switchTab('tab-participantes');
-    // }
+    // Cargar la lista de participantes al iniciar la página
+    document.addEventListener("DOMContentLoaded", function() {
+      cargarApuestas();
+    });
+    
+    // Función para obtener los registros desde Google Sheets
+    async function cargarApuestas() {
+      const contenedorTabla = document.getElementById("tabla-apuestas");
+      if (!contenedorTabla) return;
+    
+      contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Cargando registros...</td></tr>`;
+    
+      try {
+        const response = await fetch(SCRIPT_URL);
+        const participantes = await response.json();
+    
+        if (!Array.isArray(participantes) || participantes.length === 0) {
+          contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Aún no hay apuestas registradas. ¡Sé el primero!</td></tr>`;
+          return;
+        }
+    
+        // Construir las filas de la tabla
+        let htmlContent = "";
+        participantes.forEach(p => {
+          htmlContent += `
+            <tr>
+              <td><strong>${p.nombre}</strong></td>
+              <td>${p.genero}</td>
+              <td>${p.fecha}</td>
+              <td>${p.hora}</td>
+              <td>${p.peso} kg</td>
+              <td>${p.talla} cm</td>
+              <td>${p.colorOjos}</td>
+            </tr>
+          `;
+        });
+    
+        contenedorTabla.innerHTML = htmlContent;
+    
+      } catch (error) {
+        console.error("Error al cargar participantes:", error);
+        contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error al obtener la lista de participantes.</td></tr>`;
+      }
+    }
 
     function updateCount() {
       document.getElementById('count-participants').innerText = participants.length;
@@ -458,7 +483,7 @@
       if (confirm('¿Eliminar esta participación?')) {
         participants = participants.filter(p => p.id !== id);
         localStorage.setItem('baby_quiniela_participants', JSON.stringify(participants));
-        renderParticipants();
+        //renderParticipants();
         updateCount();
       }
     }
@@ -467,7 +492,7 @@
       if (confirm('¿Estás seguro de borrar todas las apuestas?')) {
         participants = [];
         localStorage.removeItem('baby_quiniela_participants');
-        renderParticipants();
+        //renderParticipants();
         updateCount();
       }
     }
