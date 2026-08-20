@@ -362,6 +362,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       // renderParticipants();
+      cargarApuestas();
       updateCount();
     });
 
@@ -429,11 +430,6 @@
         btnEnviar.textContent = "Enviar Pronóstico";
       }
     }
-
-    // Cargar la lista de participantes al iniciar la página
-    document.addEventListener("DOMContentLoaded", function() {
-      cargarApuestas();
-    });
     
     // Función para obtener los registros desde Google Sheets
     async function cargarApuestas() {
@@ -450,7 +446,8 @@
           contenedorTabla.innerHTML = `<tr><td colspan="7" style="text-align:center;">Aún no hay apuestas registradas. ¡Sé el primero!</td></tr>`;
           return;
         }
-    
+
+        participants = participantes.length;
         // Construir las filas de la tabla
         let htmlContent = "";
         participantes.forEach(p => {
